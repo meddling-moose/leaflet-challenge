@@ -15,13 +15,11 @@ function createFeatures(eqData) {
     }
 
     let earthquakes = L.geoJSON(eqData, {
-        onEachFeature: onEachFeatureFunction
-    });
-
-    let earthquakes = L.geoJSON(earthquakeData, {
+        onEachFeature: onEachFeatureFunction,
         'pointToLayer': function(geoJsonPoint, latlng){ 
             var circleMarker=L.circle(latlng, {
-                'radius': geoJsonPoint['properties']['mag']*100000 // maybe features.geometry.coordinates[2]?
+                'radius': geoJsonPoint['properties']['mag']*5000,
+                'color': geoJsonPoint['geometry']['coordinates'][2] //How do I change the color from black-white scale?
             });
             return circleMarker
         }
@@ -64,4 +62,15 @@ function createMap(eqs) {
     L.control.layers(baseMaps, overlayMaps, {
         colapsed: false
     }).addTo(myMap);
+
+    let legend = L.control({
+        position: "bottomright"
+    });
+
+    legend.onAdd = function() {
+        let div = L.DomUtil.create("div", "legend");
+        return div;
+    };
+
+    legend.addTo(myMap)
 }

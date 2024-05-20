@@ -11,7 +11,9 @@ function createFeatures(eqData) {
     function onEachFeatureFunction(feature, layer) {
         //code to be executed per feature
         //Pop up to show the information of each earthquake
-        layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${toDateTime(feature.properties.time)}</p>`);//convert this time into a readable timestamp
+        layer.bindPopup(`<h3>${feature.properties.place}</h3><hr>
+                        <p>Time: ${toDateTime(feature.properties.time)}</p>
+                        <p>Magnitude: ${feature.properties.mag}</p>`);//convert this time into a readable timestamp
     }
 
     function toDateTime(secs) {

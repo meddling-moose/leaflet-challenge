@@ -11,7 +11,13 @@ function createFeatures(eqData) {
     function onEachFeatureFunction(feature, layer) {
         //code to be executed per feature
         //Pop up to show the information of each earthquake
-        layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${feature.properties.time}</p>`);//convert this time into a readable timestamp
+        layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${toDateTime(feature.properties.time)}</p>`);//convert this time into a readable timestamp
+    }
+
+    function toDateTime(secs) {
+        let t = new Date(1970, 0, 1);
+        t.setSeconds(secs);
+        return t;
     }
 
     let earthquakes = L.geoJSON(eqData, {

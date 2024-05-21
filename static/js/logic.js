@@ -12,14 +12,8 @@ function createFeatures(eqData) {
         //code to be executed per feature
         //Pop up to show the information of each earthquake
         layer.bindPopup(`<h3>${feature.properties.place}</h3><hr>
-                        <p>Time: ${toDateTime(feature.properties.time)}</p>
+                        <p>Time: ${Date(feature.properties.time)}</p>
                         <p>Magnitude: ${feature.properties.mag}</p>`);//convert this time into a readable timestamp
-    }
-
-    function toDateTime(secs) {
-        let t = new Date(1970, 0, 1);
-        t.setSeconds(secs);
-        return t;
     }
 
     let earthquakes = L.geoJSON(eqData, {
@@ -27,11 +21,31 @@ function createFeatures(eqData) {
         'pointToLayer': function(geoJsonPoint, latlng){ 
             var circleMarker=L.circle(latlng, {
                 'radius': geoJsonPoint['properties']['mag']*5000,
-                'color': geoJsonPoint['geometry']['coordinates'][2] //How do I change the color from black-white scale?
+                'fillColor': depthColor(geoJsonPoint['geometry']['coordinates'][2]),
+                'color': '#000000',
+                'opacity': 1,
+                'fillOpacity': 1,
+                'weight': 0.5
             });
             return circleMarker
         }
     });
+
+    function depthColor(depth) {
+        if (depth > 90) {
+            return '#ff0000'; // red
+        } else if (depth > 70) {
+            return '#ff6e00'; // dark orange
+        } else if (depth > 50) {
+            return '#ffbd31'; // light orange
+        } else if (depth > 30) {
+            return '#fff200'; // yellow
+        } else if (depth > 10) {
+            return '#32cd32'; // lime green
+        } else {
+            return '#3cb043'; // green
+        }
+    }
 
     createMap(earthquakes);
 }
@@ -53,7 +67,6 @@ function createMap(eqs) {
     };
 
     let overlayMaps = {
-
         Earthquakes: eqs
     };
 
@@ -76,7 +89,14 @@ function createMap(eqs) {
     });
 
     legend.onAdd = function() {
-        let div = L.DomUtil.create("div", "legend");
+        let div = L.DomUtil.create("div", "info legend");
+        magnitudes = ['-10 - 10', '10 - 30', '30 - 50', '50 - 70', '70 - 90', '> 90'];
+        magColors = ['#3cb043', '#32cd32', '#fff200', '#ffbd31', '#ff6e00', '#ff0000'];
+        
+        for (let i = 0; i < magnitudes.length; i++) {
+            div.innerHTML += `<i style='background: ${magColors[i]}'></i> ${magnitudes[i]}<br>`;
+        };
+
         return div;
     };
 
